@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>مشغل فاخر - iOS style</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+  <style>
+    :root{
+      --bg1: #0b0b0d;
+      --bg2: #141218;
+      --card: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      --gold: #f6c84c;
+      --muted: #9a9aa6;
+      --glass: rgba(255,255,255,0.03);
+      --radius: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* page background - subtle iOS-style gradient */
+    body{
+      margin:0;
+      min-height:100vh;
+      background: radial-gradient(1200px 400px at 10% 10%, rgba(246,200,76,0.05), transparent 8%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      color:#fff;
+      padding:20px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:24px auto;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    .logo{
+      width:54px;
+      height:54px;
+      border-radius:12px;
+      background: linear-gradient(135deg, rgba(246,200,76,0.12), rgba(246,200,76,0.04));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 -8px 16px rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .logo svg{ filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)); }
+
+    h1{
+      font-size:18px;
+      margin:0;
+      letter-spacing:0.2px;
+    }
+
+    p.lead{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* controls card */
+    .controls{
+      background: var(--card);
+      border-radius: var(--radius);
+      padding:14px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.03);
+      flex-wrap:wrap;
+    }
+
+    .field{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:1 1 320px;
+    }
+
+    .url-input{
+      flex:1;
+      position:relative;
+    }
+
+    input[type="text"]{
+      width:100%;
+      padding:12px 14px;
+      background:transparent;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.06);
+      color:#fff;
+      font-size:14px;
+      outline:none;
+      transition:box-shadow .18s, border .18s;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.01);
+    }
+
+    input[type="text"]:focus{
+      box-shadow: 0 6px 22px rgba(246,200,76,0.06);
+      border-color: rgba(246,200,76,0.26);
+    }
+
+    .btn{
+      background: linear-gradient(180deg,var(--gold), #e0ad28);
+      color:#0a0a0a;
+      border-radius:12px;
+      padding:10px 12px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      cursor:pointer;
+      font-weight:600;
+      border:none;
+      box-shadow: 0 8px 18px rgba(246,200,76,0.06);
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+
+    .btn:active{ transform:translateY(1px) scale(.998); }
+    .icon{
+      width:18px;height:18px; display:inline-block; opacity:.95;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* video card */
+    .player-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:14px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    }
+
+    .video-wrap{
+      position:relative;
+      border-radius:12px;
+      overflow:hidden;
+      background:#000;
+    }
+
+    video{
+      width:100%;
+      height:auto;
+      display:block;
+      background:#000;
+    }
+
+    /* bottom utilities */
+    .utils{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    .left-tools, .right-tools{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .small{
+      background:var(--glass);
+      border-radius:10px;
+      padding:6px 8px;
+      font-size:13px;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+
+    select, input[type="range"]{
+      background:transparent;
+      color:#fff;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.04);
+      padding:6px 8px;
+      outline:none;
+    }
+
+    /* responsive */
+    @media (max-width:720px){
+      .controls{ padding:10px; gap:8px; }
+      .logo{ width:46px; height:46px; }
+      .btn{ padding:9px 10px; font-size:14px; border-radius:10px; }
+      .container{ padding:12px; }
+    }
+
+    /* subtle hover */
+    .btn:hover{ box-shadow: 0 12px 26px rgba(0,0,0,0.5); transform:translateY(-2px); }
+
+    /* tooltip like */
+    .hint{ font-size:12px; color:var(--muted); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden>
+          <!-- film icon -->
+          <svg class="" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="18" height="18" rx="3" stroke="rgba(246,200,76,0.95)" stroke-width="1.4" fill="none"/>
+            <rect x="6.5" y="7.2" width="3" height="2.6" rx="0.6" fill="rgba(246,200,76,0.95)"/>
+            <rect x="14.5" y="7.2" width="3" height="2.6" rx="0.6" fill="rgba(246,200,76,0.95)"/>
+          </svg>
+        </div>
+        <div>
+          <h1>مشغل فاخر</h1>
+          <p class="lead">واجهة iPhone-like — سلاسة وميزات متقدمة</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="hint muted" id="status">جاهز</div>
+        <button id="themeBtn" class="btn" title="تبديل الوضع">🌓 وضع</button>
+      </div>
+    </header>
+
+    <!-- controls -->
+    <div class="controls" role="region" aria-label="Controls">
+      <!-- local file -->
+      <div class="field" style="flex:0 0 auto;">
+        <input id="fileInput" type="file" accept="video/*" style="display:none">
+        <button id="openLocal" class="btn" title="فتح فيديو من الجهاز">
+          <span class="icon">📁</span><span>فتح من الجهاز</span>
+        </button>
+      </div>
+
+      <!-- url -->
+      <div class="field url-input">
+        <input id="videoUrl" type="text" placeholder="الصق رابط الفيديو أو رابط HLS (.m3u8) هنا — ثم اضغط فتح" autocomplete="off" />
+      </div>
+
+      <div style="display:flex;gap:8px; flex:0 0 auto;">
+        <button id="openUrl" class="btn" title="فتح عبر الرابط"><span class="icon">🌐</span><span>فتح</span></button>
+        <button id="downloadBtn" class="btn" title="تحميل الفيديو"><span class="icon">⬇</span><span>تحميل</span></button>
+      </div>
+    </div>
+
+    <!-- player card -->
+    <div class="player-card">
+      <div class="video-wrap">
+        <video id="player" playsinline controls crossorigin preload="auto"></video>
+      </div>
+
+      <div class="utils">
+        <div class="left-tools">
+          <div class="small">السرعة:
+            <select id="speedSelect" title="سرعة التشغيل">
+              <option value="0.5">0.5x</option>
+              <option value="0.75">0.75x</option>
+              <option value="1" selected>1x</option>
+              <option value="1.25">1.25x</option>
+              <option value="1.5">1.5x</option>
+              <option value="1.75">1.75x</option>
+              <option value="2">2x</option>
+            </select>
+          </div>
+
+          <div class="small">الجودة:
+            <select id="qualitySelect" title="اختيار جودة (للـ HLS اختر Auto أو مستوى معين)">
+              <option value="auto">Auto</option>
+            </select>
+          </div>
+
+          <div class="small">مستوى الصوت:
+            <input id="volumeRange" type="range" min="0" max="1" step="0.01" value="1" />
+          </div>
+        </div>
+
+        <div class="right-tools">
+          <div class="small muted" id="currentInfo">—</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <label class="small" style="display:flex;align-items:center;gap:8px;">
+              <input id="resumeToggle" type="checkbox" checked /> تذكر واستئناف
+            </label>
+            <button id="copyBtn" class="btn" style="padding:8px 10px">نسخ الرابط</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer style="text-align:center;color:var(--muted);font-size:13px;padding-top:6px;">
+      مصمم لك — إذا تبي أعدل أي تفصيلة في الستايل أو الخصائص علّمني.
+    </footer>
+  </div>
+
+  <!-- Plyr + hls.js -->
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.1/dist/hls.min.js"></script>
+
+  <script>
+    // Elements
+    const video = document.getElementById('player');
+    const fileInput = document.getElementById('fileInput');
+    const openLocal = document.getElementById('openLocal');
+    const openUrl = document.getElementById('openUrl');
+    const videoUrl = document.getElementById('videoUrl');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const speedSelect = document.getElementById('speedSelect');
+    const volumeRange = document.getElementById('volumeRange');
+    const qualitySelect = document.getElementById('qualitySelect');
+    const resumeToggle = document.getElementById('resumeToggle');
+    const statusEl = document.getElementById('status');
+    const currentInfo = document.getElementById('currentInfo');
+    const copyBtn = document.getElementById('copyBtn');
+    const themeBtn = document.getElementById('themeBtn');
+
+    // Plyr
+    const player = new Plyr(video, {
+      controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+      hideControls: false
+    });
+
+    // HLS handler
+    let hls = null;
+    let currentSrc = '';
+    const LS_KEY = 'fancy_player_state_v1';
+
+    // Utils
+    function setStatus(t){
+      statusEl.textContent = t;
+    }
+
+    function isHls(url){
+      return url && (url.includes('.m3u8') || url.match(/\/hls\//i));
+    }
+
+    // Load URL (supports MP4 and HLS)
+    async function loadFromUrl(url, remember=true){
+      if(!url) { alert('أدخل رابط صالح'); return; }
+      cleanupHls();
+      currentSrc = url;
+      video.pause();
+      setStatus('جاري التحميل...');
+      qualitySelect.innerHTML = '<option value="auto">Auto</option>';
+
+      if(isHls(url) && Hls.isSupported()){
+        // use hls.js for adaptive streaming + better buffering
+        hls = new Hls({
+          capLevelToPlayerSize: true,
+          maxBufferLength: 60, // keep bigger buffer to reduce stalling
+          maxMaxBufferLength: 120,
+          xhrSetup: function(xhr, url){
+            // enable cross-site cookies if needed
+            // xhr.withCredentials = true;
+          }
+        });
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+          hls.loadSource(url);
+        });
+
+        hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+          setStatus('تم تحميل قائمة التشغيل — الجودة متاحة');
+          populateQualityOptions(data.levels || []);
+          // Auto resume level (-1)
+          hls.currentLevel = -1;
+          video.play().catch(()=>{});
+          if(remember) saveState();
+        });
+
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          console.warn('HLS error', data);
+          setStatus('خطأ في تحميل HLS — تفقد الرابط أو السيرفر');
+        });
+
+        // show fragment progress
+        hls.on(Hls.Events.FRAG_BUFFERED, () => {
+          setStatus('تشغيل — التحميل مُحسّن');
+        });
+
+      } else {
+        // progressive or mp4
+        video.src = url;
+        video.load();
+        try { await video.play(); setStatus('تشغيل'); } catch(e){ setStatus('جاهز للتشغيل'); }
+        if(remember) saveState();
+      }
+
+      // set interface
+      currentInfo.textContent = (isHls(url) ? 'HLS مصدر' : 'Direct / MP4');
+      videoUrl.value = url;
+      if(navigator.onLine === false) setStatus('الوضع غير متصل بالإنترنت');
+    }
+
+    // Populate quality select for HLS
+    function populateQualityOptions(levels){
+      // levels is array of {height,width,bitrate,attrs}
+      qualitySelect.innerHTML = '<option value="auto">Auto</option>';
+      levels.forEach((l, idx)=> {
+        const label = (l.height ? l.height + 'p' : (Math.round(l.bitrate/1000)+'kbps')) + (l.name ? ' '+l.name : '');
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = label;
+        qualitySelect.appendChild(opt);
+      });
+    }
+
+    // When quality changed
+    qualitySelect.addEventListener('change', () => {
+      if(!hls) return;
+      const v = qualitySelect.value;
+      if(v === 'auto') hls.currentLevel = -1;
+      else hls.currentLevel = Number(v);
+      setStatus(v === 'auto' ? 'Auto (Adaptive)' : 'تم اختيار جودة يدوياً');
+    });
+
+    // Open local file
+    openLocal.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e)=> {
+      const f = e.target.files && e.target.files[0];
+      if(!f) return;
+      cleanupHls();
+      const url = URL.createObjectURL(f);
+      currentSrc = url;
+      video.src = url;
+      video.load();
+      video.play().catch(()=>{});
+      currentInfo.textContent = 'ملف محلي';
+      setStatus('مشغل الملف المحلي');
+      saveState(); // remember can store blob URL (session-only)
+    });
+
+    // Open URL
+    openUrl.addEventListener('click', ()=> loadFromUrl(videoUrl.value.trim()));
+
+    // Download button
+    downloadBtn.addEventListener('click', async () => {
+      if(!currentSrc && !videoUrl.value.trim()){
+        alert('لا يوجد فيديو متاح للتحميل');
+        return;
+      }
+      const url = currentSrc || videoUrl.value.trim();
+      if(isHls(url)){
+        // HLS: not trivial to download single-file in browser
+        const ok = confirm('هذا مصدر HLS (m3u8). تنزيل ملف واحد بسرعة من المتصفح محدود. تقدر فتح ملف المانيفست لتحميله خارجيًا. تود فتح المانيفست الآن؟');
+        if(ok){
+          window.open(url, '_blank');
+        }
+        return;
+      } else {
+        // direct MP4 or similar: fast download using anchor
+        const a = document.createElement('a');
+        a.href = url;
+        // try to infer filename
+        const name = url.split('/').pop().split('?')[0] || 'video.mp4';
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setStatus('بدأ التحميل — تحقق من مدير التنزيل في المتصفح');
+      }
+    });
+
+    // Copy link
+    copyBtn.addEventListener('click', ()=> {
+      const url = currentSrc || videoUrl.value.trim();
+      if(!url){ alert('لا يوجد رابط للنسخ'); return; }
+      navigator.clipboard?.writeText(url).then(()=> {
+        setStatus('تم نسخ الرابط');
+      }).catch(()=> {
+        prompt('انسخ الرابط يدوياً:', url);
+      });
+    });
+
+    // Speed control
+    speedSelect.addEventListener('change', ()=> {
+      video.playbackRate = Number(speedSelect.value);
+    });
+
+    // Volume control
+    volumeRange.addEventListener('input', ()=> {
+      video.volume = Number(volumeRange.value);
+      player.muted = (video.volume === 0);
+    });
+
+    // Save state (src + time)
+    function saveState(){
+      try{
+        if(!resumeToggle.checked) return;
+        const state = {
+          src: currentSrc || videoUrl.value.trim() || '',
+          time: video.currentTime || 0,
+          date: Date.now()
+        };
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+        setStatus('تم حفظ حالة التشغيل');
+      }catch(e){ console.warn(e); }
+    }
+
+    // Restore state
+    function tryRestore(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return;
+        const state = JSON.parse(raw);
+        if(!state.src) return;
+        // if the source is local blob URL it won't persist across sessions; we'll still try
+        const age = Date.now() - (state.date||0);
+        // only restore if saved less than 7 days ago
+        if(age > 1000*60*60*24*7) return;
+        // ask user whether to resume
+        const resume = confirm('هل تود استئناف آخر فيديو تشغيلته؟');
+        if(resume){
+          loadFromUrl(state.src, false).then(()=> {
+            // wait a bit then seek
+            setTimeout(()=> {
+              video.currentTime = state.time || 0;
+              video.play().catch(()=>{});
+            }, 800);
+          }).catch(()=>{});
+        }
+      }catch(e){ console.warn(e); }
+    }
+
+    // periodically save current time
+    setInterval(()=> {
+      // only save if playing or paused recently
+      if(resumeToggle.checked && (currentSrc || video.src)){
+        saveState();
+      }
+    }, 5000);
+
+    // cleanup hls
+    function cleanupHls(){
+      if(hls){
+        try{ hls.destroy(); }catch(e){ console.warn(e); }
+        hls = null;
+      }
+      // clear video src if needed
+      // video.removeAttribute('src'); video.load();
+    }
+
+    // improve buffering: on waiting try to nudge hls or preload
+    video.addEventListener('waiting', ()=> {
+      setStatus('يتم التحميل — محاولة تحسين التخزين المؤقت');
+      if(hls){
+        // try to increase buffer by starting load
+        try {
+          hls.startLoad();
+        } catch(e){}
+      } else {
+        // for mp4 progressive, ensure preload auto and try to reload
+        video.preload = 'auto';
+      }
+    });
+
+    video.addEventListener('playing', ()=> setStatus('قيد التشغيل'));
+    video.addEventListener('pause', ()=> setStatus('متوقف مؤقتاً'));
+
+    // save on unload
+    window.addEventListener('beforeunload', saveState);
+
+    // theme toggle (simple)
+    let dark = true;
+    themeBtn.addEventListener('click', ()=>{
+      dark = !dark;
+      if(!dark){
+        document.documentElement.style.setProperty('--bg1','#f8f9fb');
+        document.documentElement.style.setProperty('--bg2','#f1f3f6');
+        document.documentElement.style.setProperty('--muted','#666');
+        document.documentElement.style.setProperty('--gold','#2b6cff');
+        document.body.style.color = '#222';
+      } else {
+        document.documentElement.style.setProperty('--bg1','#0b0b0d');
+        document.documentElement.style.setProperty('--bg2','#141218');
+        document.documentElement.style.setProperty('--muted','#9a9aa6');
+        document.documentElement.style.setProperty('--gold','#f6c84c');
+        document.body.style.color = '#fff';
+      }
+    });
+
+    // Smart: auto-detect HLS when pasting
+    videoUrl.addEventListener('paste', (e)=>{
+      setTimeout(()=> {
+        const v = videoUrl.value.trim();
+        if(isHls(v)) setStatus('كشف HLS — سيتم استخدام تشغيل تكيفي (HLS).');
+      }, 50);
+    });
+
+    // initial restore
+    tryRestore();
+
+    // expose some functions to console for debugging
+    window.__fancyPlayer = {
+      loadFromUrl, cleanupHls, hlsRef: ()=> hls
+    };
+
+    // small UX: if user types Enter in URL -> open
+    videoUrl.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') openUrl.click();
+    });
+
+    // On quality selection when HLS not ready, show hint
+    qualitySelect.addEventListener('focus', ()=> {
+      if(!hls) alert('قائمة الجودة مفعلّة فقط مع HLS (ملفات m3u8).');
+    });
+
+  </script>
+</body>
+</html>
